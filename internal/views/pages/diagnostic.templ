@@ -1,0 +1,35 @@
+package pages
+
+import "diwe-web/internal/views/components"
+
+templ DiagnosticContent() {
+	<section>
+		<h1>Diagnóstico comercial</h1>
+		<p>Cuéntanos tu situación y te proponemos una solución concreta en menos de 48 horas hábiles.</p>
+		<form hx-post="/diagnostico" hx-target="#diagnostic-result" hx-swap="innerHTML" class="form-grid">
+			<input name="name" placeholder="Nombre" required/>
+			<input name="company" placeholder="Empresa" required/>
+			<input name="industry" placeholder="Industria" required/>
+			<input type="email" name="email" placeholder="Email" required/>
+			<input name="phone" placeholder="Teléfono" required/>
+			<textarea name="main_problem" placeholder="Problema principal" required></textarea>
+			<input name="approx_budget" placeholder="Presupuesto aproximado" required/>
+			<select name="urgency" required>
+				<option value="">Urgencia</option>
+				<option value="alta">Alta</option>
+				<option value="media">Media</option>
+				<option value="baja">Baja</option>
+			</select>
+			<button class="btn" type="submit">Enviar diagnóstico</button>
+		</form>
+		<div id="diagnostic-result"></div>
+	</section>
+}
+
+templ DiagnosticPage() {
+	@components.Layout("Diagnóstico", "/diagnostico", DiagnosticContent())
+}
+
+templ DiagnosticResult(name string) {
+	<div class="alert success">Gracias, { name }. Te contactaremos con una propuesta inicial.</div>
+}

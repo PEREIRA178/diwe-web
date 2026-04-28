@@ -1,0 +1,80 @@
+package components
+
+import "diwe-web/internal/services"
+
+templ Layout(title string, currentPath string, content templ.Component) {
+	<!doctype html>
+	<html lang="es">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>{ title }</title>
+			<link rel="stylesheet" href="/public/css/app.css"/>
+			<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+			<script src="/public/js/app.js" defer></script>
+		</head>
+		<body>
+			<header class="site-header">
+				<div class="container">
+					<a href="/" class="logo">DIWE B2B</a>
+					<nav>
+						<a href="/soluciones" class={ navClass(currentPath, "/soluciones") }>Soluciones</a>
+						<a href="/casos" class={ navClass(currentPath, "/casos") }>Casos</a>
+						<a href="/diagnostico" class={ navClass(currentPath, "/diagnostico") }>Diagnóstico</a>
+						<a href="/admin" class={ navClass(currentPath, "/admin") }>Admin</a>
+					</nav>
+				</div>
+			</header>
+			<main class="container">
+				@content
+			</main>
+			<footer class="site-footer container">
+				<p>Base comercial B2B enfocada en vender servicios web por industria.</p>
+			</footer>
+		</body>
+	</html>
+}
+
+templ HomeHero(solutions []services.Solution, cases []services.CaseStudy) {
+	<section class="hero">
+		<h1>Sitios web y sistemas concretos para vender más servicios B2B</h1>
+		<p>Construimos sitio web comercial, ERP simple, tótem, directorio y WhatsApp automatizado para sectores específicos.</p>
+		<div class="cta-row">
+			<a class="btn" href="/diagnostico">Quiero diagnóstico</a>
+			<a class="btn btn-secondary" href="https://wa.me/56900000000" target="_blank" rel="noreferrer">Hablar por WhatsApp</a>
+			<a class="btn btn-link" href="/casos">Ver casos reales</a>
+		</div>
+	</section>
+	<section>
+		<h2>Soluciones principales</h2>
+		<div class="grid">
+			for _, s := range solutions {
+				<article class="card">
+					<h3>{ s.Name }</h3>
+					<p>{ s.Problem }</p>
+					<p><strong>Desde:</strong> { s.PriceFrom } · <strong>Plazo:</strong> { s.EstimatedTime }</p>
+					<a href={ "/soluciones/" + s.Slug }>Ver solución</a>
+				</article>
+			}
+		</div>
+	</section>
+	<section>
+		<h2>Casos por industria</h2>
+		<div class="grid">
+			for _, c := range cases {
+				<article class="card">
+					<h3>{ c.IndustryName }</h3>
+					<p>{ c.HighlightedOffer }</p>
+					<a href={ "/casos/" + c.IndustrySlug }>Ver caso</a>
+				</article>
+			}
+		</div>
+	</section>
+}
+
+func navClass(current, section string) string {
+	if len(current) >= len(section) && current[:len(section)] == section {
+		return "active"
+	}
+	return ""
+}

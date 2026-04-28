@@ -1,0 +1,52 @@
+package pages
+
+import (
+	"diwe-web/internal/services"
+	"diwe-web/internal/views/components"
+)
+
+templ SolutionsContent(items []services.Solution) {
+	<section>
+		<h1>Soluciones</h1>
+		<p>Servicios web B2B diseñados para cerrar negocios más rápido.</p>
+		<div class="grid">
+			for _, s := range items {
+				<article class="card">
+					<h2>{ s.Name }</h2>
+					<p>{ s.Problem }</p>
+					<ul>
+						for _, inc := range s.Includes {
+							<li>{ inc }</li>
+						}
+					</ul>
+					<p><strong>Desde:</strong> { s.PriceFrom } · <strong>Plazo:</strong> { s.EstimatedTime }</p>
+					<a class="btn" href={ "/soluciones/" + s.Slug }>{ s.CTA }</a>
+				</article>
+			}
+		</div>
+	</section>
+}
+
+templ SolutionsPage(items []services.Solution) {
+	@components.Layout("Soluciones", "/soluciones", SolutionsContent(items))
+}
+
+templ SolutionDetailContent(s services.Solution) {
+	<section>
+		<h1>{ s.Name }</h1>
+		<p>{ s.Problem }</p>
+		<h2>Qué incluye</h2>
+		<ul>
+			for _, inc := range s.Includes {
+				<li>{ inc }</li>
+			}
+		</ul>
+		<p><strong>Precio desde:</strong> { s.PriceFrom }</p>
+		<p><strong>Tiempo estimado:</strong> { s.EstimatedTime }</p>
+		<a class="btn" href="/diagnostico">Solicitar diagnóstico</a>
+	</section>
+}
+
+templ SolutionDetailPage(s services.Solution) {
+	@components.Layout(s.Name, "/soluciones", SolutionDetailContent(s))
+}
