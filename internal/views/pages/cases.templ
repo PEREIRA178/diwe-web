@@ -1,0 +1,41 @@
+package pages
+
+import (
+	"diwe-web/internal/services"
+	"diwe-web/internal/views/components"
+)
+
+templ CasesList(cases []services.CaseStudy) {
+	<div class="grid" id="cases-list">
+		for _, c := range cases {
+			<article class="card">
+				<h3>{ c.IndustryName }</h3>
+				<p><strong>Problema inicial:</strong> { c.InitialProblem }</p>
+				<p><strong>Qué se vendió:</strong> { c.Sold }</p>
+				<p><strong>Resultado:</strong> { c.Result }</p>
+				<a class="btn" href="/diagnostico">{ c.CTA }</a>
+			</article>
+		}
+	</div>
+}
+
+templ CasesContent(cases []services.CaseStudy, industries []services.Industry, selected string) {
+	<section>
+		<h1>Casos de éxito por industria</h1>
+		<form class="filters" hx-get="/casos" hx-target="#cases-list" hx-select="#cases-list" hx-swap="outerHTML">
+			<label for="industry">Filtrar por industria</label>
+			<select name="industry" id="industry">
+				<option value="">Todas</option>
+				for _, ind := range industries {
+					<option value={ ind.Slug } selected?={ selected == ind.Slug }>{ ind.Name }</option>
+				}
+			</select>
+			<button class="btn btn-secondary" type="submit">Filtrar</button>
+		</form>
+		@CasesList(cases)
+	</section>
+}
+
+templ CasesPage(cases []services.CaseStudy, industries []services.Industry, selected string) {
+	@components.Layout("Casos", "/casos", CasesContent(cases, industries, selected))
+}

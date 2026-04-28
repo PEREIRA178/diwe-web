@@ -1,0 +1,95 @@
+package pages
+
+import (
+	"time"
+	"diwe-web/internal/services"
+	"diwe-web/internal/views/components"
+)
+
+templ AdminHomeContent() {
+	<section>
+		<h1>Admin</h1>
+		<p>Panel mínimo para revisar pipeline comercial inicial.</p>
+		<div class="cta-row">
+			<a class="btn" href="/admin/prospectos">Ver prospectos</a>
+			<a class="btn btn-secondary" href="/admin/propuestas">Ver propuestas</a>
+		</div>
+	</section>
+}
+
+templ AdminHomePage() {
+	@components.Layout("Admin", "/admin", AdminHomeContent())
+}
+
+templ ProspectStatusForm(p services.Prospect) {
+	<form hx-post={ "/admin/prospectos/" + p.ID + "/status" } hx-target="closest tr" hx-swap="outerHTML">
+		<select name="status">
+			<option value="nuevo" selected?={ p.Status == "nuevo" }>Nuevo</option>
+			<option value="contactado" selected?={ p.Status == "contactado" }>Contactado</option>
+			<option value="propuesta-enviada" selected?={ p.Status == "propuesta-enviada" }>Propuesta enviada</option>
+			<option value="cerrado" selected?={ p.Status == "cerrado" }>Cerrado</option>
+		</select>
+		<button class="btn btn-secondary" type="submit">Actualizar</button>
+	</form>
+}
+
+templ ProspectRow(p services.Prospect) {
+	<tr>
+		<td>{ p.Name }</td>
+		<td>{ p.Company }</td>
+		<td>{ p.Industry }</td>
+		<td>{ p.Email }</td>
+		<td>{ p.Phone }</td>
+		<td>{ p.ApproxBudget }</td>
+		<td>@ProspectStatusForm(p)</td>
+	</tr>
+}
+
+templ ProspectsContent(items []services.Prospect) {
+	<section>
+		<h1>Prospectos</h1>
+		<table>
+			<thead><tr><th>Nombre</th><th>Empresa</th><th>Industria</th><th>Email</th><th>Teléfono</th><th>Presupuesto</th><th>Estado</th></tr></thead>
+			<tbody>
+				for _, p := range items {
+					@ProspectRow(p)
+				}
+			</tbody>
+		</table>
+	</section>
+}
+
+templ ProspectsPage(items []services.Prospect) {
+	@components.Layout("Prospectos", "/admin/prospectos", ProspectsContent(items))
+}
+
+templ ProposalsContent(items []services.Proposal) {
+	<section>
+		<h1>Propuestas</h1>
+		<table>
+			<thead><tr><th>Empresa</th><th>Estado</th><th>Aperturas</th><th>Última apertura</th><th>Link</th></tr></thead>
+			<tbody>
+				for _, p := range items {
+					<tr>
+						<td>{ p.CompanyName }</td>
+						<td>{ p.Status }</td>
+						<td>{ p.OpenedCount }</td>
+						<td>{ formatDate(p.LastOpenedAt) }</td>
+						<td><a href={ "/p/" + p.Slug }>{ "/p/" + p.Slug }</a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</section>
+}
+
+templ ProposalsPage(items []services.Proposal) {
+	@components.Layout("Propuestas", "/admin/propuestas", ProposalsContent(items))
+}
+
+func formatDate(t *time.Time) string {
+	if t == nil {
+		return "-"
+	}
+	return t.Format("2006-01-02 15:04")
+}

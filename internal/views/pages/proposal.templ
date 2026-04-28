@@ -1,0 +1,27 @@
+package pages
+
+import (
+	"diwe-web/internal/services"
+	"diwe-web/internal/views/components"
+)
+
+templ ProposalContent(p services.Proposal) {
+	<section>
+		<h1>Propuesta para { p.CompanyName }</h1>
+		<p><strong>Resumen del problema:</strong> { p.ProblemSummary }</p>
+		<p><strong>Solución propuesta:</strong> { p.ProposedSolution }</p>
+		<h2>Ítems incluidos</h2>
+		<ul>
+			for _, item := range p.Items {
+				<li>{ item }</li>
+			}
+		</ul>
+		<p><strong>Precio:</strong> { p.Price }</p>
+		<p><strong>Plazo:</strong> { p.Deadline }</p>
+		<a class="btn" href="https://wa.me/56900000000?text=Acepto%20la%20propuesta">Aceptar propuesta</a>
+	</section>
+}
+
+templ ProposalPage(p services.Proposal) {
+	@components.Layout("Propuesta", "/p", ProposalContent(p))
+}

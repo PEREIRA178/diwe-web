@@ -1,0 +1,10 @@
+package pages
+
+import (
+	"diwe-web/internal/services"
+	"diwe-web/internal/views/components"
+)
+
+templ HomePage(solutions []services.Solution, cases []services.CaseStudy) {
+	@components.Layout("DIWE B2B | Home", "/", components.HomeHero(solutions, cases))
+}
